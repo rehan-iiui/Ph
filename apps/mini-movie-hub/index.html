@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Movie Hub</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #08090d;
+    color: white;
+    min-height: 100vh;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* HEADER */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+
+    padding: 18px 16px;
+
+    background: rgba(8,9,13,0.95);
+    backdrop-filter: blur(15px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    font-size: 22px;
+
+    background: linear-gradient(145deg,#ff3b45,#950008);
+}
+
+.logo h1 {
+    font-size: 17px;
+}
+
+.logo p {
+    color: #8f939f;
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+.profile {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+    border-radius: 50%;
+
+    color: white;
+    background: #181a22;
+
+    font-size: 17px;
+}
+
+/* SEARCH */
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    height: 44px;
+
+    margin-top: 15px;
+    padding: 0 13px;
+
+    border-radius: 13px;
+
+    background: #15171e;
+    border: 1px solid rgba(255,255,255,0.07);
+}
+
+.search span {
+    color: #999da8;
+}
+
+.search input {
+    flex: 1;
+
+    border: none;
+    outline: none;
+
+    color: white;
+    background: transparent;
+
+    font-size: 12px;
+}
+
+.search input::placeholder {
+    color: #737782;
+}
+
+.search button {
+    border: none;
+    background: transparent;
+    color: #858995;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 245px;
+
+    margin: 16px;
+
+    padding: 25px 20px;
+
+    display: flex;
+    align-items: flex-end;
+
+    border-radius: 22px;
+
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,0.88),
+            rgba(0,0,0,0.48),
+            rgba(0,0,0,0.1)
+        ),
+        linear-gradient(
+            135deg,
+            #142c48,
+            #5b1c27 55%,
+            #101118
+        );
+}
+
+.hero::after {
+    content: "🚀";
+
+    position: absolute;
+
+    right: 25px;
+    top: 38px;
+
+    font-size: 95px;
+
+    opacity: 0.35;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 240px;
+}
+
+.featured {
+    color: #ff5961;
+
+    font-size: 9px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+}
+
+.hero h2 {
+    font-size: 29px;
+    margin: 8px 0;
+}
+
+.hero p {
+    color: #c3c6ce;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hero-info {
+    display: flex;
+    gap: 7px;
+
+    margin-top: 10px;
+
+    color: #b4b8c2;
+
+    font-size: 9px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 7px;
+
+    margin-top: 13px;
+}
+
+.hero-buttons button {
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.details {
+    background: #e50914;
+    color: white;
+}
+
+.watch {
+    background: rgba(255,255,255,0.12);
+    color: white;
+}
+
+/* SECTIONS */
+
+.section {
+    margin: 25px 16px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 13px;
+}
+
+.section-title h2 {
+    font-size: 17px;
+}
+
+.section-title button {
+    border: none;
+    background: transparent;
+    color: #ff5961;
+    font-size: 10px;
+}
+
+/* MOVIE GRID */
+
+.movie-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+}
+
+.movie {
+    overflow: hidden;
+
+    border-radius: 14px;
+
+    background: #12141a;
+
+    border: 1px solid rgba(255,255,255,0.07);
+
+    transition: 0.2s;
+}
+
+.movie:hover {
+    transform: translateY(-3px);
+}
+
+.poster {
+    height: 145px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    background:
+        linear-gradient(145deg,#283e58,#11151e);
+}
+
+.poster span {
+    font-size: 57px;
+}
+
+.rating {
+    position: absolute;
+
+    top: 7px;
+    left: 7px;
+
+    padding: 4px 6px;
+
+    border-radius: 6px;
+
+    background: rgba(0,0,0,0.65);
+
+    font-size: 9px;
+}
+
+.favorite {
+    position: absolute;
+
+    top: 7px;
+    right: 7px;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    background: rgba(0,0,0,0.6);
+
+    color: white;
+}
+
+.favorite.active {
+    color: #ff3440;
+}
+
+.movie-info {
+    padding: 10px;
+}
+
+.movie-info h3 {
+    font-size: 12px;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.movie-info p {
+    margin-top: 4px;
+
+    color: #898d98;
+
+    font-size: 9px;
+}
+
+.movie-info .open {
+    width: 100%;
+
+    margin-top: 9px;
+    padding: 7px;
+
+    border: none;
+    border-radius: 7px;
+
+    color: white;
+    background: #20232c;
+
+    font-size: 9px;
+}
+
+/* SEARCH RESULTS */
+
+#searchSection {
+    display: none;
+}
+
+/* GENRE BAR */
+
+.genre-bar {
+    display: flex;
+
+    gap: 7px;
+
+    overflow-x: auto;
+
+    padding-bottom: 5px;
+}
+
+.genre-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.genre {
+    flex-shrink: 0;
+
+    padding: 8px 12px;
+
+    border: none;
+    border-radius: 20px;
+
+    color: #b8bbc4;
+    background: #161820;
+
+    font-size: 9px;
+}
+
+.genre.active {
+    color: white;
+    background: #e50914;
+}
+
+/* MODAL */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+
+    background: rgba(0,0,0,0.75);
+
+    backdrop-filter: blur(7px);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 350px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    border-radius: 22px;
+
+    background: #15171e;
+
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-poster {
+    height: 190px;
+
+    display: grid;
+    place-items: center;
+
+    position: relative;
+
+    font-size: 85px;
+
+    background: linear-gradient(145deg,#263f5b,#241318);
+}
+
+.close {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    color: white;
+    background: rgba(0,0,0,0.6);
+
+    z-index: 2;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.modal-content h2 {
+    font-size: 23px;
+}
+
+.modal-meta {
+    display: flex;
+    gap: 8px;
+
+    margin-top: 8px;
+
+    color: #9296a1;
+
+    font-size: 10px;
+}
+
+.modal-content p {
+    margin-top: 14px;
+
+    color: #b8bbc4;
+
+    line-height: 1.6;
+
+    font-size: 11px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+.modal-buttons button {
+    flex: 1;
+
+    padding: 11px;
+
+    border: none;
+    border-radius: 9px;
+
+    color: white;
+
+    background: #e50914;
+
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.modal-buttons .secondary {
+    background: #272a33;
+}
+
+/* EMPTY */
+
+.empty {
+    padding: 50px 15px;
+
+    text-align: center;
+
+    color: #888c97;
+}
+
+.empty div {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.empty h3 {
+    color: white;
+    font-size: 16px;
+}
+
+.empty p {
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+/* TOAST */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 25px;
+
+    transform: translate(-50%,20px);
+
+    padding: 10px 15px;
+
+    border-radius: 10px;
+
+    background: rgba(25,25,30,0.96);
+
+    color: white;
+
+    font-size: 10px;
+
+    opacity: 0;
+
+    transition: 0.25s;
+
+    pointer-events: none;
+
+    z-index: 200;
+}
+
+.toast.show {
+    opacity: 1;
+
+    transform: translate(-50%,0);
+}
+
+/* RESPONSIVE */
+
+@media (min-width: 600px) {
+    .movie-grid {
+        grid-template-columns: repeat(4,1fr);
+    }
+
+    .poster {
+        height: 190px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-top">
+
+        <div class="logo">
+            <div class="logo-icon">🎬</div>
+
+            <div>
+                <h1>Mini Movie Hub</h1>
+                <p>Discover your next movie</p>
+            </div>
+        </div>
+
+        <button class="profile">👤</button>
+
+    </div>
+
+    <div class="search">
+
+        <span>🔎</span>
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search movies..."
+        >
+
+        <button id="clearSearch">✕</button>
+
+    </div>
+
+</header>
+
+
+<!-- FEATURED -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="featured">⭐ FEATURED MOVIE</span>
+
+        <h2>Interstellar</h2>
+
+        <p>
+            A breathtaking journey through space, time,
+            distant worlds and the future of humanity.
+        </p>
+
+        <div class="hero-info">
+            <span>2014</span>
+            <span>•</span>
+            <span>Sci-Fi</span>
+            <span>•</span>
+            <span>2h 49m</span>
+        </div>
+
+        <div class="hero-buttons">
+
+            <button
+                class="details"
+                onclick="showMovie('Interstellar')"
+            >
+                ▶ Details
+            </button>
+
+            <button
+                class="watch"
+                onclick="addWatchlist('Interstellar')"
+            >
+                ＋ Watchlist
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- GENRES -->
+
+<section class="section">
+
+    <div class="section-title">
+        <h2>Genres</h2>
+    </div>
+
+    <div class="genre-bar">
+
+        <button class="genre active" data-genre="All">
+            All
+        </button>
+
+        <button class="genre" data-genre="Action">
+            Action
+        </button>
+
+        <button class="genre" data-genre="Adventure">
+            Adventure
+        </button>
+
+        <button class="genre" data-genre="Animation">
+            Animation
+        </button>
+
+        <button class="genre" data-genre="Comedy">
+            Comedy
+        </button>
+
+        <button class="genre" data-genre="Drama">
+            Drama
+        </button>
+
+        <button class="genre" data-genre="Sci-Fi">
+            Sci-Fi
+        </button>
+
+        <button class="genre" data-genre="Fantasy">
+            Fantasy
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- TRENDING -->
+
+<section class="section" id="trendingSection">
+
+    <div class="section-title">
+
+        <h2>🔥 Trending</h2>
+
+        <button id="trendingAll">
+            See all
+        </button>
+
+    </div>
+
+    <div class="movie-grid" id="movieGrid"></div>
+
+</section>
+
+
+<!-- SEARCH RESULTS -->
+
+<section class="section" id="searchSection">
+
+    <div class="section-title">
+        <h2>🔎 Search Results</h2>
+    </div>
+
+    <div class="movie-grid" id="searchGrid"></div>
+
+</section>
+
+
+<!-- WATCHLIST -->
+
+<section class="section">
+
+    <div class="section-title">
+        <h2>📋 My Watchlist</h2>
+    </div>
+
+    <div
+        id="watchlist"
+        class="movie-grid"
+    ></div>
+
+</section>
+
+
+<!-- MOVIE MODAL -->
+
+<div class="modal" id="movieModal">
+
+    <div class="modal-box">
+
+        <div class="modal-poster">
+
+            <button
+                class="close"
+                id="closeModal"
+            >
+                ✕
+            </button>
+
+            <span id="modalEmoji">🎬</span>
+
+        </div>
+
+        <div class="modal-content">
+
+            <h2 id="modalTitle">
+                Movie
+            </h2>
+
+            <div class="modal-meta">
+
+                <span id="modalYear">2024</span>
+                <span>•</span>
+                <span id="modalGenre">Action</span>
+                <span>•</span>
+                <span id="modalRating">⭐ 8.0</span>
+
+            </div>
+
+            <p id="modalDescription">
+                Movie description.
+            </p>
+
+            <div class="modal-buttons">
+
+                <button
+                    id="modalWatchlist"
+                >
+                    ＋ Watchlist
+                </button>
+
+                <button
+                    class="secondary"
+                    id="modalFavorite"
+                >
+                    ❤️ Favorite
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+/* =====================================
+   MOVIE DATABASE
+===================================== */
+
+const movies = [
+
+    {
+        title: "Interstellar",
+        year: 2014,
+        genre: "Sci-Fi",
+        rating: 8.7,
+        emoji: "🚀",
+        description:
+            "A space exploration adventure involving distant planets, time and the future of humanity."
+    },
+
+    {
+        title: "The Martian",
+        year: 2015,
+        genre: "Sci-Fi",
+        rating: 8.0,
+        emoji: "🔴",
+        description:
+            "A stranded astronaut uses science, creativity and determination to survive on Mars."
+    },
+
+    {
+        title: "Jurassic World",
+        year: 2015,
+        genre: "Adventure",
+        rating: 6.9,
+        emoji: "🦖",
+        description:
+            "A dinosaur park becomes the setting for an exciting adventure when things go wrong."
+    },
+
+    {
+        title: "Spider-Man",
+        year: 2018,
+        genre: "Action",
+        rating: 8.4,
+        emoji: "🕷️",
+        description:
+            "A young hero discovers his abilities and learns how to use them responsibly."
+    },
+
+    {
+        title: "The Lion King",
+        year: 2019,
+        genre: "Animation",
+        rating: 6.8,
+        emoji: "🦁",
+        description:
+            "A young lion grows into his responsibilities and discovers his place in the world."
+    },
+
+    {
+        title: "Toy Story",
+        year: 1995,
+        genre: "Animation",
+        rating: 8.3,
+        emoji: "🤠",
+        description:
+            "Toys come alive when humans are away and experience an unforgettable adventure."
+    },
+
+    {
+        title: "Jumanji",
+        year: 2017,
+        genre: "Adventure",
+        rating: 6.9,
+        emoji: "🎲",
+        description:
+            "A mysterious game transports players into a dangerous and surprising world."
+    },
+
+    {
+        title: "The Batman",
+        year: 2022,
+        genre: "Action",
+        rating: 7.8,
+        emoji: "🦇",
+        description:
+            "A mysterious detective investigates a series of crimes across a dark city."
+    },
+
+    {
+        title: "Home Alone",
+        year: 1990,
+        genre: "Comedy",
+        rating: 7.7,
+        emoji: "🏠",
+        description:
+            "A young boy is accidentally left home alone and has to protect his house."
+    },
+
+    {
+        title: "Harry Potter",
+        year: 2001,
+        genre: "Fantasy",
+        rating: 7.6,
+        emoji: "🪄",
+        description:
+            "A young wizard begins his journey at a magical school and discovers a remarkable world."
+    }
+
+];
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const movieGrid =
+    document.getElementById("movieGrid");
+
+const searchGrid =
+    document.getElementById("searchGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const searchSection =
+    document.getElementById("searchSection");
+
+const trendingSection =
+    document.getElementById("trendingSection");
+
+const watchlist =
+    document.getElementById("watchlist");
+
+const modal =
+    document.getElementById("movieModal");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =====================================
+   STORAGE
+===================================== */
+
+let favorites =
+    JSON.parse(
+        localStorage.getItem("movieFavorites") || "[]"
+    );
+
+let savedWatchlist =
+    JSON.parse(
+        localStorage.getItem("movieWatchlist") || "[]"
+    );
+
+
+/* =====================================
+   TOAST
+===================================== */
+
+let toastTimer;
+
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 1600);
+
+}
+
+
+/* =====================================
+   CREATE MOVIE CARD
+===================================== */
+
+function createMovieCard(movie) {
+
+    const isFavorite =
+        favorites.includes(movie.title);
+
+    return `
+
+        <article class="movie">
+
+            <div class="poster">
+
+                <span>
+                    ${movie.emoji}
+                </span>
+
+                <div class="rating">
+                    ⭐ ${movie.rating}
+                </div>
+
+                <button
+                    class="favorite ${isFavorite ? "active" : ""}"
+                    onclick="toggleFavorite('${movie.title}')"
+                >
+                    ${isFavorite ? "♥" : "♡"}
+                </button>
+
+            </div>
+
+            <div class="movie-info">
+
+                <h3>
+                    ${movie.title}
+                </h3>
+
+                <p>
+                    ${movie.year} • ${movie.genre}
+                </p>
+
+                <button
+                    class="open"
+                    onclick="showMovie('${movie.title}')"
+                >
+                    View Details
+                </button>
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* =====================================
+   RENDER MOVIES
+===================================== */
+
+function renderMovies(list = movies) {
+
+    movieGrid.innerHTML =
+        list.map(createMovieCard).join("");
+
+}
+
+
+/* =====================================
+   SEARCH
+===================================== */
+
+searchInput.addEventListener("input", () => {
+
+    const query =
+        searchInput.value
+        .toLowerCase()
+        .trim();
+
+    if (!query) {
+
+        searchSection.style.display = "none";
+        trendingSection.style.display = "block";
+
+        return;
+    }
+
+    const results =
+        movies.filter(movie =>
+            movie.title
+                .toLowerCase()
+                .includes(query)
+            ||
+            movie.genre
+                .toLowerCase()
+                .includes(query)
+        );
+
+    searchSection.style.display = "block";
+    trendingSection.style.display = "none";
+
+    if (results.length === 0) {
+
+        searchGrid.innerHTML = `
+            <div class="empty">
+                <div>🎬</div>
+                <h3>No movies found</h3>
+                <p>Try another search.</p>
+            </div>
+        `;
+
+    } else {
+
+        searchGrid.innerHTML =
+            results.map(createMovieCard).join("");
+
+    }
+
+});
+
+
+/* =====================================
+   CLEAR SEARCH
+===================================== */
+
+document
+    .getElementById("clearSearch")
+    .addEventListener("click", () => {
+
+        searchInput.value = "";
+
+        searchSection.style.display = "none";
+        trendingSection.style.display = "block";
+
+        searchInput.focus();
+
+    });
+
+
+/* =====================================
+   GENRE FILTER
+===================================== */
+
+document
+    .querySelectorAll(".genre")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            document
+                .querySelectorAll(".genre")
+                .forEach(item =>
+                    item.classList.remove("active")
+                );
+
+            button.classList.add("active");
+
+            const genre =
+                button.dataset.genre;
+
+            if (genre === "All") {
+
+                renderMovies(movies);
+
+            } else {
+
+                const filtered =
+                    movies.filter(
+                        movie =>
+                            movie.genre === genre
+                    );
+
+                renderMovies(filtered);
+
+            }
+
+            window.scrollTo({
+                top: document
+                    .getElementById("trendingSection")
+                    .offsetTop - 20,
+                behavior: "smooth"
+            });
+
+        });
+
+    });
+
+
+/* =====================================
+   FAVORITES
+===================================== */
+
+function toggleFavorite(title) {
+
+    if (favorites.includes(title)) {
+
+        favorites =
+            favorites.filter(
+                item => item !== title
+            );
+
+        showToast("Removed from favorites");
+
+    } else {
+
+        favorites.push(title);
+
+        showToast("Added to favorites ❤️");
+
+    }
+
+    localStorage.setItem(
+        "movieFavorites",
+        JSON.stringify(favorites)
+    );
+
+    renderMovies();
+
+    if (searchInput.value.trim()) {
+
+        searchInput.dispatchEvent(
+            new Event("input")
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   WATCHLIST
+===================================== */
+
+function addWatchlist(title) {
+
+    if (!savedWatchlist.includes(title)) {
+
+        savedWatchlist.push(title);
+
+        localStorage.setItem(
+            "movieWatchlist",
+            JSON.stringify(savedWatchlist)
+        );
+
+        showToast("Added to watchlist 📋");
+
+    } else {
+
+        showToast("Already in watchlist");
+
+    }
+
+    renderWatchlist();
+
+}
+
+
+/* =====================================
+   RENDER WATCHLIST
+===================================== */
+
+function renderWatchlist() {
+
+    if (savedWatchlist.length === 0) {
+
+        watchlist.innerHTML = `
+            <div class="empty">
+                <div>📋</div>
+                <h3>Watchlist is empty</h3>
+                <p>Add movies you want to watch later.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    const list =
+        savedWatchlist
+            .map(title =>
+                movies.find(
+                    movie => movie.title === title
+                )
+            )
+            .filter(Boolean);
+
+    watchlist.innerHTML =
+        list.map(createMovieCard).join("");
+
+}
+
+
+/* =====================================
+   MOVIE DETAILS
+===================================== */
+
+function showMovie(title) {
+
+    const movie =
+        movies.find(
+            item => item.title === title
+        );
+
+    if (!movie) {
+        return;
+    }
+
+    document.getElementById("modalTitle")
+        .textContent = movie.title;
+
+    document.getElementById("modalEmoji")
+        .textContent = movie.emoji;
+
+    document.getElementById("modalYear")
+        .textContent = movie.year;
+
+    document.getElementById("modalGenre")
+        .textContent = movie.genre;
+
+    document.getElementById("modalRating")
+        .textContent = `⭐ ${movie.rating}`;
+
+    document.getElementById("modalDescription")
+        .textContent = movie.description;
+
+    document.getElementById("modalWatchlist")
+        .onclick = () =>
+            addWatchlist(movie.title);
+
+    document.getElementById("modalFavorite")
+        .onclick = () =>
+            toggleFavorite(movie.title);
+
+    modal.classList.add("show");
+
+}
+
+
+/* =====================================
+   CLOSE MODAL
+===================================== */
+
+document
+    .getElementById("closeModal")
+    .addEventListener("click", () => {
+
+        modal.classList.remove("show");
+
+    });
+
+
+modal.addEventListener("click", event => {
+
+    if (event.target === modal) {
+
+        modal.classList.remove("show");
+
+    }
+
+});
+
+
+/* =====================================
+   PROFILE
+===================================== */
+
+document
+    .querySelector(".profile")
+    .addEventListener("click", () => {
+
+        showToast("Mini Movie Hub");
+
+    });
+
+
+/* =====================================
+   SEE ALL
+===================================== */
+
+document
+    .getElementById("trendingAll")
+    .addEventListener("click", () => {
+
+        renderMovies(movies);
+
+        showToast(
+            `${movies.length} movies available`
+        );
+
+    });
+
+
+/* =====================================
+   INITIAL LOAD
+===================================== */
+
+renderMovies();
+renderWatchlist();
+
+</script>
+
+</body>
+</html>
