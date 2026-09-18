@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="phone">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <span id="time">12:00</span>
+
+        <div class="status-icons">
+            <span>📶</span>
+            <span>📡</span>
+            <span>🔋</span>
+        </div>
+    </div>
+
+    <!-- LOCK SCREEN -->
+    <section id="lockScreen" class="lock-screen">
+
+        <div class="lock-top">
+            <span>🔒</span>
+        </div>
+
+        <div class="lock-content">
+            <div id="lockTime">12:00</div>
+            <div id="lockDate">Friday, September 18</div>
+
+            <div class="lock-message">
+                Swipe up to unlock
+            </div>
+
+            <button id="unlockBtn" class="unlock-btn">
+                ↑
+            </button>
+        </div>
+
+        <div class="lock-shortcuts">
+            <button id="flashlightBtn">🔦</button>
+            <button id="cameraBtn">📷</button>
+        </div>
+
+    </section>
+
+    <!-- HOME SCREEN -->
+    <section id="homeScreen" class="home-screen hidden">
+
+        <!-- HOME HEADER -->
+        <div class="home-header">
+            <div>
+                <p class="greeting">Good afternoon</p>
+                <h1>My Smartphone</h1>
+            </div>
+
+            <button id="controlBtn" class="control-button">
+                ⚙️
+            </button>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="home-search">
+            <span>🔎</span>
+            <input
+                id="appSearch"
+                type="text"
+                placeholder="Search apps"
+                autocomplete="off"
+            >
+        </div>
+
+        <!-- APP GRID -->
+        <div id="appGrid" class="app-grid">
+
+            <button
+                class="app-icon"
+                data-app="Mini Movie Hub"
+                data-path="Apps/mini-movie-hub/index.html"
+            >
+                <div class="icon red">🎬</div>
+                <span>Movies</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Music Player"
+                data-path="Apps/music-player/index.html"
+            >
+                <div class="icon purple">🎵</div>
+                <span>Music</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Pixel Art Studio"
+                data-path="Apps/pixel-art-studio/index.html"
+            >
+                <div class="icon blue">🎨</div>
+                <span>Pixel Art</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Puzzle Box"
+                data-path="Apps/puzzle-box/index.html"
+            >
+                <div class="icon orange">🧩</div>
+                <span>Puzzle Box</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Board Game"
+                data-path="Apps/virtual-board-game/index.html"
+            >
+                <div class="icon green">🎲</div>
+                <span>Board Game</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Card Games"
+                data-path="Apps/card-game-hub/index.html"
+            >
+                <div class="icon pink">🃏</div>
+                <span>Card Games</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Virtual Piano"
+                data-path="Apps/virtual-piano/index.html"
+            >
+                <div class="icon cyan">🎹</div>
+                <span>Piano</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Drum Kit"
+                data-path="Apps/virtual-drum-kit/index.html"
+            >
+                <div class="icon yellow">🥁</div>
+                <span>Drums</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Space Explorer"
+                data-path="Apps/space-explorer/index.html"
+            >
+                <div class="icon dark">🌌</div>
+                <span>Space</span>
+            </button>
+
+            <button
+                class="app-icon"
+                data-app="Robot Creator"
+                data-path="Apps/robot-creator/index.html"
+            >
+                <div class="icon silver">🤖</div>
+                <span>Robot</span>
+            </button>
+
+            <!-- BUILT-IN APPS -->
+
+            <button class="app-icon" data-app="Calculator">
+                <div class="icon gray">🧮</div>
+                <span>Calculator</span>
+            </button>
+
+            <button class="app-icon" data-app="Notes">
+                <div class="icon yellow">📝</div>
+                <span>Notes</span>
+            </button>
+
+            <button class="app-icon" data-app="Gallery">
+                <div class="icon multicolor">🌄</div>
+                <span>Gallery</span>
+            </button>
+
+            <button class="app-icon" data-app="Settings">
+                <div class="icon darkgray">⚙️</div>
+                <span>Settings</span>
+            </button>
+
+        </div>
+
+        <!-- DOCK -->
+        <div class="dock">
+
+            <button class="dock-app" data-app="Phone">
+                📞
+            </button>
+
+            <button class="dock-app" data-app="Messages">
+                💬
+            </button>
+
+            <button class="dock-app" data-app="Browser">
+                🌐
+            </button>
+
+            <button class="dock-app" data-app="Camera">
+                📷
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- CONTROL CENTER -->
+    <div id="controlCenter" class="control-center hidden">
+
+        <div class="control-header">
+            <div>
+                <strong>Control Center</strong>
+                <small>Smartphone Simulator</small>
+            </div>
+
+            <button id="closeControl">✕</button>
+        </div>
+
+        <div class="control-grid">
+
+            <button class="control-tile active" data-toggle>
+                <span>📶</span>
+                <strong>Wi-Fi</strong>
+                <small>Connected</small>
+            </button>
+
+            <button class="control-tile active" data-toggle>
+                <span>🔵</span>
+                <strong>Bluetooth</strong>
+                <small>On</small>
+            </button>
+
+            <button class="control-tile" data-toggle>
+                <span>✈️</span>
+                <strong>Airplane</strong>
+                <small>Off</small>
+            </button>
+
+            <button class="control-tile" data-toggle>
+                <span>🔦</span>
+                <strong>Flashlight</strong>
+                <small>Off</small>
+            </button>
+
+        </div>
+
+        <div class="brightness-box">
+            <span>☀️</span>
+
+            <input
+                id="brightness"
+                type="range"
+                min="30"
+                max="100"
+                value="100"
+            >
+        </div>
+
+        <div class="quick-actions">
+
+            <button id="lockDevice">
+                🔒
+                <span>Lock</span>
+            </button>
+
+            <button id="restartDevice">
+                🔄
+                <span>Restart</span>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- APP WINDOW -->
+    <div id="appWindow" class="app-window hidden">
+
+        <div class="app-window-header">
+
+            <button id="backButton">
+                ‹
+            </button>
+
+            <strong id="appWindowTitle">
+                App
+            </strong>
+
+            <button id="closeApp">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="appWindowContent" class="app-window-content">
+
+            <div class="app-placeholder">
+                <div>📱</div>
+                <h2>App Ready</h2>
+                <p>
+                    This app will be connected when we create
+                    its folder.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- HOME INDICATOR -->
+    <div id="homeIndicator" class="home-indicator hidden"></div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
