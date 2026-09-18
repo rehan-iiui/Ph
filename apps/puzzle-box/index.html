@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Puzzle Box</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 15% 10%,#7048ff,transparent 35%),
+        radial-gradient(circle at 90% 90%,#00b9ff,transparent 35%),
+        #090b18;
+    padding:15px;
+}
+
+.app{
+    max-width:950px;
+    margin:auto;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#8e7cff;
+}
+
+.score{
+    padding:10px 15px;
+    border-radius:15px;
+    background:rgba(255,255,255,.1);
+    font-weight:bold;
+}
+
+.menu{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.menu button{
+    padding:14px 8px;
+    border:0;
+    border-radius:15px;
+    background:rgba(255,255,255,.09);
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.menu button:hover,
+.menu button.active{
+    background:linear-gradient(135deg,#816bff,#4b92ff);
+}
+
+.game{
+    background:rgba(14,17,38,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:25px;
+    padding:25px;
+    min-height:540px;
+    backdrop-filter:blur(20px);
+}
+
+.game-title{
+    text-align:center;
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.description{
+    text-align:center;
+    color:#9da1b9;
+    margin-bottom:22px;
+}
+
+button{
+    font-family:inherit;
+}
+
+.action{
+    border:0;
+    padding:12px 18px;
+    border-radius:13px;
+    background:linear-gradient(135deg,#816cff,#4b91ff);
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.action:hover{
+    transform:translateY(-1px);
+}
+
+/* MEMORY */
+
+.memory{
+    display:grid;
+    grid-template-columns:repeat(4,75px);
+    gap:10px;
+    justify-content:center;
+}
+
+.memory-card{
+    width:75px;
+    height:75px;
+    border:0;
+    border-radius:14px;
+    background:linear-gradient(135deg,#695cff,#347fff);
+    color:transparent;
+    font-size:30px;
+    cursor:pointer;
+}
+
+.memory-card.open,
+.memory-card.matched{
+    background:#202642;
+    color:white;
+}
+
+.memory-card.matched{
+    box-shadow:0 0 15px rgba(88,255,176,.5);
+}
+
+/* NUMBER */
+
+.number-box{
+    text-align:center;
+}
+
+.number{
+    font-size:55px;
+    font-weight:900;
+    margin:25px;
+    letter-spacing:8px;
+}
+
+.number-input{
+    width:220px;
+    padding:13px;
+    border:0;
+    border-radius:12px;
+    text-align:center;
+    font-size:20px;
+    background:#252943;
+    color:white;
+    outline:none;
+}
+
+.message{
+    min-height:30px;
+    margin:15px;
+    color:#b9bdd2;
+}
+
+/* SLIDING PUZZLE */
+
+.sliding{
+    display:grid;
+    grid-template-columns:repeat(4,70px);
+    gap:5px;
+    justify-content:center;
+}
+
+.tile{
+    width:70px;
+    height:70px;
+    border:0;
+    border-radius:10px;
+    background:linear-gradient(135deg,#795cff,#4c91ff);
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.tile.empty{
+    background:rgba(255,255,255,.04);
+    cursor:default;
+}
+
+/* WORD */
+
+.word-box{
+    text-align:center;
+}
+
+.word{
+    font-size:35px;
+    letter-spacing:12px;
+    margin:30px 10px;
+}
+
+.letters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    max-width:600px;
+    margin:auto;
+}
+
+.letter{
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:10px;
+    background:#252943;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.letter:hover{
+    background:#6659dc;
+}
+
+.letter.used{
+    opacity:.3;
+    cursor:default;
+}
+
+.hint{
+    color:#9da1b9;
+    margin:15px;
+}
+
+/* MATH */
+
+.math{
+    text-align:center;
+}
+
+.equation{
+    font-size:40px;
+    font-weight:bold;
+    margin:30px;
+}
+
+.answers{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.answer{
+    min-width:100px;
+    padding:15px;
+    border:0;
+    border-radius:13px;
+    background:#252943;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.answer:hover{
+    background:#6659dc;
+}
+
+@media(max-width:600px){
+
+    .menu{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .memory{
+        grid-template-columns:repeat(4,60px);
+    }
+
+    .memory-card{
+        width:60px;
+        height:60px;
+    }
+
+    .sliding{
+        grid-template-columns:repeat(4,60px);
+    }
+
+    .tile{
+        width:60px;
+        height:60px;
+    }
+
+    .game{
+        padding:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="logo">🧩 <span>Puzzle</span> Box</div>
+    <div class="score">⭐ Score: <span id="score">0</span></div>
+</header>
+
+<div class="menu">
+    <button class="active" onclick="selectGame('memory',this)">🧠 Memory</button>
+    <button onclick="selectGame('number',this)">🔢 Number</button>
+    <button onclick="selectGame('sliding',this)">🔲 Slide</button>
+    <button onclick="selectGame('word',this)">🔤 Word</button>
+    <button onclick="selectGame('math',this)">➗ Math</button>
+</div>
+
+<div class="game" id="game"></div>
+
+</div>
+
+<script>
+
+let score = Number(localStorage.getItem("puzzleScore")) || 0;
+
+document.getElementById("score").textContent = score;
+
+let currentGame = "memory";
+
+/* ---------------- SCORE ---------------- */
+
+function addScore(points){
+
+    score += points;
+
+    document.getElementById("score").textContent = score;
+
+    localStorage.setItem("puzzleScore",score);
+
+}
+
+/* ---------------- GAME SELECT ---------------- */
+
+function selectGame(game,button){
+
+    currentGame = game;
+
+    document.querySelectorAll(".menu button")
+        .forEach(b=>b.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if(game==="memory") memoryGame();
+    if(game==="number") numberGame();
+    if(game==="sliding") slidingGame();
+    if(game==="word") wordGame();
+    if(game==="math") mathGame();
+
+}
+
+/* ---------------- MEMORY ---------------- */
+
+let memoryFirst = null;
+let memorySecond = null;
+let memoryLock = false;
+let memoryMatched = 0;
+
+function memoryGame(){
+
+    const emojis = ["🚀","🌟","🎮","🐱","🍕","⚽","🚗","🎵"];
+
+    let cards = [...emojis,...emojis];
+
+    cards.sort(()=>Math.random()-.5);
+
+    memoryFirst = null;
+    memorySecond = null;
+    memoryLock = false;
+    memoryMatched = 0;
+
+    document.getElementById("game").innerHTML = `
+
+        <div class="game-title">🧠 Memory Match</div>
+
+        <div class="description">
+            Find all matching pairs.
+        </div>
+
+        <div class="memory" id="memoryBoard"></div>
+
+        <div style="text-align:center;margin-top:22px;">
+            <button class="action" onclick="memoryGame()">🔄 New Game</button>
+        </div>
+
+    `;
+
+    const board =
+        document.getElementById("memoryBoard");
+
+    cards.forEach((emoji,index)=>{
+
+        const card =
+            document.createElement("button");
+
+        card.className = "memory-card";
+
+        card.dataset.emoji = emoji;
+        card.dataset.index = index;
+
+        card.textContent = emoji;
+
+        card.onclick = ()=>flipMemory(card);
+
+        board.appendChild(card);
+
+    });
+
+}
+
+function flipMemory(card){
+
+    if(memoryLock) return;
+
+    if(card.classList.contains("open") ||
+       card.classList.contains("matched")) return;
+
+    card.classList.add("open");
+
+    if(!memoryFirst){
+
+        memoryFirst = card;
+        return;
+
+    }
+
+    memorySecond = card;
+
+    if(memoryFirst.dataset.emoji ===
+       memorySecond.dataset.emoji){
+
+        memoryFirst.classList.add("matched");
+        memorySecond.classList.add("matched");
+
+        memoryMatched++;
+
+        addScore(10);
+
+        memoryFirst = null;
+        memorySecond = null;
+
+        if(memoryMatched===8){
+
+            setTimeout(()=>{
+                alert("🎉 You matched everything!");
+            },300);
+
+        }
+
+    }else{
+
+        memoryLock = true;
+
+        setTimeout(()=>{
+
+            memoryFirst.classList.remove("open");
+            memorySecond.classList.remove("open");
+
+            memoryFirst = null;
+            memorySecond = null;
+
+            memoryLock = false;
+
+        },700);
+
+    }
+
+}
+
+/* ---------------- NUMBER ---------------- */
+
+let targetNumber = 0;
+let attempts = 0;
+
+function numberGame(){
+
+    targetNumber =
+        Math.floor(Math.random()*100)+1;
+
+    attempts = 0;
+
+    document.getElementById("game").innerHTML = `
+
+        <div class="game-title">🔢 Guess The Number</div>
+
+        <div class="description">
+            Guess a number between 1 and 100.
+        </div>
+
+        <div class="number-box">
+
+            <div class="number">❓</div>
+
+            <input
+                id="numberInput"
+                class="number-input"
+                type="number"
+                min="1"
+                max="100"
+                placeholder="Enter number"
+            >
+
+            <br><br>
+
+            <button class="action" onclick="checkNumber()">
+                Check
+            </button>
+
+            <div class="message" id="numberMessage">
+                Good luck!
+            </div>
+
+            <button class="action" onclick="numberGame()">
+                🔄 New Number
+            </button>
+
+        </div>
+    `;
+
+}
+
+function checkNumber(){
+
+    const input =
+        Number(document.getElementById("numberInput").value);
+
+    const message =
+        document.getElementById("numberMessage");
+
+    if(!input){
+
+        message.textContent = "Enter a number first.";
+
+        return;
+
+    }
+
+    attempts++;
+
+    if(input === targetNumber){
+
+        const points =
+            Math.max(5,30-attempts*2);
+
+        addScore(points);
+
+        message.textContent =
+            "🎉 Correct! +" + points + " points";
+
+    }else if(input < targetNumber){
+
+        message.textContent =
+            "⬆️ Too low! Try a higher number.";
+
+    }else{
+
+        message.textContent =
+            "⬇️ Too high! Try a lower number.";
+
+    }
+
+}
+
+/* ---------------- SLIDING ---------------- */
+
+let tiles = [];
+
+function slidingGame(){
+
+    tiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+
+    do{
+        tiles.sort(()=>Math.random()-.5);
+    }while(!isSolvable(tiles));
+
+    renderSliding();
+
+}
+
+function isSolvable(arr){
+
+    let inversions = 0;
+
+    for(let i=0;i<arr.length;i++){
+
+        for(let j=i+1;j<arr.length;j++){
+
+            if(arr[i] && arr[j] && arr[i]>arr[j]){
+                inversions++;
+            }
+
+        }
+
+    }
+
+    const emptyRow =
+        4-Math.floor(arr.indexOf(0)/4);
+
+    return (
+        (emptyRow%2===0 && inversions%2===1) ||
+        (emptyRow%2===1 && inversions%2===0)
+    );
+
+}
+
+function renderSliding(){
+
+    document.getElementById("game").innerHTML = `
+
+        <div class="game-title">🔲 Sliding Puzzle</div>
+
+        <div class="description">
+            Arrange the numbers from 1 to 15.
+        </div>
+
+        <div class="sliding" id="slideBoard"></div>
+
+        <div style="text-align:center;margin-top:22px;">
+            <button class="action" onclick="slidingGame()">
+                🔄 Shuffle
+            </button>
+        </div>
+
+    `;
+
+    const board =
+        document.getElementById("slideBoard");
+
+    tiles.forEach((value,index)=>{
+
+        const tile =
+            document.createElement("button");
+
+        tile.className =
+            "tile " + (value===0 ? "empty" : "");
+
+        tile.textContent =
+            value===0 ? "" : value;
+
+        tile.onclick = ()=>{
+            moveTile(index);
+        };
+
+        board.appendChild(tile);
+
+    });
+
+}
+
+function moveTile(index){
+
+    const empty =
+        tiles.indexOf(0);
+
+    const row = Math.floor(index/4);
+    const col = index%4;
+
+    const erow = Math.floor(empty/4);
+    const ecol = empty%4;
+
+    const adjacent =
+        Math.abs(row-erow)+
+        Math.abs(col-ecol)===1;
+
+    if(!adjacent) return;
+
+    [tiles[index],tiles[empty]] =
+        [tiles[empty],tiles[index]];
+
+    renderSliding();
+
+    if(checkSolved()){
+
+        addScore(50);
+
+        setTimeout(()=>{
+            alert("🎉 Puzzle solved! +50 points");
+        },200);
+
+    }
+
+}
+
+function checkSolved(){
+
+    for(let i=0;i<15;i++){
+
+        if(tiles[i]!==i+1) return false;
+
+    }
+
+    return tiles[15]===0;
+
+}
+
+/* ---------------- WORD ---------------- */
+
+const words = [
+    ["PLANET","A world that travels around a star."],
+    ["ROCKET","A vehicle used to travel into space."],
+    ["PYTHON","A popular programming language."],
+    ["JUNGLE","A place with many trees and wild animals."],
+    ["CASTLE","A large historic fortified building."],
+    ["OCEAN","A huge body of salt water."]
+];
+
+let currentWord;
+let guessed = [];
+let wordAttempts = 0;
+
+function wordGame(){
+
+    const chosen =
+        words[Math.floor(Math.random()*words.length)];
+
+    currentWord = chosen[0];
+    guessed = [];
+    wordAttempts = 0;
+
+    renderWord();
+
+}
+
+function renderWord(){
+
+    let display = "";
+
+    for(const letter of currentWord){
+
+        display +=
+            guessed.includes(letter)
+            ? letter+" "
+            : "_ ";
+
+    }
+
+    const alphabet =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    document.getElementById("game").innerHTML = `
+
+        <div class="game-title">🔤 Word Puzzle</div>
+
+        <div class="description">
+            ${words.find(w=>w[0]===currentWord)[1]}
+        </div>
+
+        <div class="word">${display}</div>
+
+        <div class="letters" id="letters"></div>
+
+        <div class="hint">
+            Guesses: ${wordAttempts}
+        </div>
+
+        <div style="text-align:center;">
+            <button class="action" onclick="wordGame()">
+                🔄 New Word
+            </button>
+        </div>
+
+    `;
+
+    const letters =
+        document.getElementById("letters");
+
+    alphabet.forEach(letter=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "letter";
+
+        button.textContent = letter;
+
+        button.disabled =
+            guessed.includes(letter);
+
+        if(button.disabled){
+            button.classList.add("used");
+        }
+
+        button.onclick = ()=>guessLetter(letter);
+
+        letters.appendChild(button);
+
+    });
+
+}
+
+function guessLetter(letter){
+
+    if(guessed.includes(letter)) return;
+
+    guessed.push(letter);
+    wordAttempts++;
+
+    if(!currentWord.includes(letter)){
+
+        if(wordAttempts>=8){
+
+            alert(
+                "❌ Game over! The word was " +
+                currentWord
+            );
+
+            wordGame();
+
+            return;
+
+        }
+
+    }
+
+    renderWord();
+
+    const solved =
+        [...currentWord].every(
+            letter=>guessed.includes(letter)
+        );
+
+    if(solved){
+
+        addScore(25);
+
+        setTimeout(()=>{
+            alert("🎉 Word solved! +25 points");
+        },200);
+
+    }
+
+}
+
+/* ---------------- MATH ---------------- */
+
+let mathAnswer = 0;
+
+function mathGame(){
+
+    const a =
+        Math.floor(Math.random()*20)+1;
+
+    const b =
+        Math.floor(Math.random()*20)+1;
+
+    const operations = ["+","-","×"];
+
+    const operation =
+        operations[
+            Math.floor(Math.random()*operations.length)
+        ];
+
+    if(operation==="+"){
+
+        mathAnswer = a+b;
+
+    }else if(operation==="-"){
+
+        mathAnswer = a-b;
+
+    }else{
+
+        mathAnswer = a*b;
+
+    }
+
+    let answers = [mathAnswer];
+
+    while(answers.length<4){
+
+        const random =
+            mathAnswer +
+            Math.floor(Math.random()*21)-10;
+
+        if(!answers.includes(random)){
+            answers.push(random);
+        }
+
+    }
+
+    answers.sort(()=>Math.random()-.5);
+
+    document.getElementById("game").innerHTML = `
+
+        <div class="game-title">➗ Quick Math</div>
+
+        <div class="description">
+            Choose the correct answer.
+        </div>
+
+        <div class="math">
+
+            <div class="equation">
+                ${a} ${operation} ${b} = ?
+            </div>
+
+            <div class="answers" id="answers"></div>
+
+        </div>
+
+    `;
+
+    const container =
+        document.getElementById("answers");
+
+    answers.forEach(answer=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent = answer;
+
+        button.onclick = ()=>{
+
+            if(answer===mathAnswer){
+
+                addScore(10);
+
+                button.textContent =
+                    "✅ " + answer;
+
+                setTimeout(mathGame,500);
+
+            }else{
+
+                button.textContent =
+                    "❌ " + answer;
+
+            }
+
+        };
+
+        container.appendChild(button);
+
+    });
+
+}
+
+memoryGame();
+
+</script>
+
+</body>
+</html>
