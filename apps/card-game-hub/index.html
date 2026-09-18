@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Card Game Hub</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 10% 10%,#693cff,transparent 35%),
+        radial-gradient(circle at 90% 90%,#00c9ff,transparent 35%),
+        #080b18;
+    padding:15px;
+}
+
+.app{
+    max-width:1050px;
+    margin:auto;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#917cff;
+}
+
+.score{
+    padding:10px 15px;
+    border-radius:14px;
+    background:rgba(255,255,255,.1);
+}
+
+.menu{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.menu button{
+    border:0;
+    padding:14px;
+    border-radius:15px;
+    background:rgba(255,255,255,.09);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.menu button.active,
+.menu button:hover{
+    background:linear-gradient(135deg,#816cff,#4b91ff);
+}
+
+.game{
+    min-height:550px;
+    background:rgba(13,17,38,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:25px;
+    padding:22px;
+}
+
+.title{
+    text-align:center;
+    font-size:28px;
+    font-weight:800;
+}
+
+.subtitle{
+    text-align:center;
+    color:#9ca1bb;
+    margin:8px 0 25px;
+}
+
+.action{
+    border:0;
+    padding:12px 18px;
+    border-radius:13px;
+    background:linear-gradient(135deg,#806bff,#4d91ff);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.action:hover{
+    transform:translateY(-1px);
+}
+
+.cards{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.card{
+    width:70px;
+    height:100px;
+    border-radius:12px;
+    background:white;
+    color:#111;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:8px;
+    font-size:19px;
+    font-weight:bold;
+    box-shadow:0 8px 18px rgba(0,0,0,.3);
+}
+
+.card.red{
+    color:#e72e4d;
+}
+
+.card.black{
+    color:#111;
+}
+
+.card.back{
+    background:
+        linear-gradient(135deg,#7562ff,#398cff);
+    color:white;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+}
+
+.card.clickable{
+    cursor:pointer;
+}
+
+.card.clickable:hover{
+    transform:translateY(-5px);
+}
+
+.card-center{
+    text-align:center;
+    font-size:32px;
+}
+
+.card-bottom{
+    text-align:right;
+    transform:rotate(180deg);
+}
+
+/* SOLITAIRE */
+
+.solitaire-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.piles{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.pile{
+    width:70px;
+    height:100px;
+    border:2px dashed rgba(255,255,255,.18);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#777d98;
+}
+
+.tableau{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+    min-height:300px;
+}
+
+.column{
+    position:relative;
+    min-height:230px;
+}
+
+.column .card{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.column .card:hover{
+    transform:translateX(-50%) translateY(-3px);
+}
+
+/* MEMORY */
+
+.memory-grid{
+    display:grid;
+    grid-template-columns:repeat(4,75px);
+    gap:10px;
+    justify-content:center;
+}
+
+.memory-card{
+    width:75px;
+    height:95px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(135deg,#7562ff,#398cff);
+    color:transparent;
+    font-size:30px;
+    cursor:pointer;
+}
+
+.memory-card.open,
+.memory-card.matched{
+    background:white;
+    color:#111;
+}
+
+.memory-card.matched{
+    opacity:.55;
+}
+
+/* HIGHER LOWER */
+
+.higher{
+    text-align:center;
+}
+
+.big-card{
+    margin:20px auto;
+    width:130px;
+    height:180px;
+    font-size:28px;
+}
+
+.big-card .card-center{
+    font-size:65px;
+}
+
+.guess-buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:20px;
+}
+
+.guess{
+    border:0;
+    padding:15px 25px;
+    border-radius:15px;
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.higher-btn{
+    background:linear-gradient(135deg,#ff5872,#ff874d);
+}
+
+.lower-btn{
+    background:linear-gradient(135deg,#4b91ff,#36c7d9);
+}
+
+.message{
+    min-height:30px;
+    color:#b6bad0;
+    margin:18px;
+    font-weight:bold;
+}
+
+.stats{
+    text-align:center;
+    color:#9297b0;
+    margin-top:15px;
+}
+
+@media(max-width:650px){
+
+    .menu{
+        grid-template-columns:1fr;
+    }
+
+    .tableau{
+        gap:3px;
+    }
+
+    .tableau .card,
+    .piles .card,
+    .pile{
+        width:45px;
+        height:68px;
+        font-size:12px;
+        padding:4px;
+    }
+
+    .tableau .card-center{
+        font-size:18px;
+    }
+
+    .memory-grid{
+        grid-template-columns:repeat(4,60px);
+    }
+
+    .memory-card{
+        width:60px;
+        height:75px;
+        font-size:23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="logo">🃏 <span>Card</span> Game Hub</div>
+    <div class="score">⭐ <span id="score">0</span></div>
+</header>
+
+<div class="menu">
+    <button class="active" onclick="selectGame('solitaire',this)">
+        ♠ Solitaire
+    </button>
+
+    <button onclick="selectGame('memory',this)">
+        🧠 Memory
+    </button>
+
+    <button onclick="selectGame('higher',this)">
+        🔼 Higher / Lower
+    </button>
+</div>
+
+<div class="game" id="game"></div>
+
+</div>
+
+<script>
+
+/* =========================
+   GLOBAL
+========================= */
+
+let score =
+    Number(localStorage.getItem("cardHubScore")) || 0;
+
+document.getElementById("score").textContent = score;
+
+function addScore(points){
+
+    score += points;
+
+    document.getElementById("score").textContent = score;
+
+    localStorage.setItem("cardHubScore",score);
+}
+
+function selectGame(game,button){
+
+    document.querySelectorAll(".menu button")
+        .forEach(b=>b.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if(game==="solitaire") startSolitaire();
+    if(game==="memory") startMemory();
+    if(game==="higher") startHigher();
+
+}
+
+/* =========================
+   CARD SYSTEM
+========================= */
+
+const suits = ["♠","♥","♦","♣"];
+
+const ranks = [
+    "A","2","3","4","5","6","7",
+    "8","9","10","J","Q","K"
+];
+
+function createDeck(){
+
+    const deck=[];
+
+    suits.forEach(suit=>{
+
+        ranks.forEach((rank,index)=>{
+
+            deck.push({
+                suit:suit,
+                rank:rank,
+                value:index+1,
+                red:suit==="♥" || suit==="♦"
+            });
+
+        });
+
+    });
+
+    return deck;
+}
+
+function shuffle(deck){
+
+    for(let i=deck.length-1;i>0;i--){
+
+        const j =
+            Math.floor(Math.random()*(i+1));
+
+        [deck[i],deck[j]] =
+            [deck[j],deck[i]];
+
+    }
+
+    return deck;
+}
+
+function cardHTML(card,extra=""){
+
+    return `
+        <div class="card ${card.red?"red":"black"} ${extra}">
+            <div>${card.rank}${card.suit}</div>
+            <div class="card-center">${card.suit}</div>
+            <div class="card-bottom">${card.rank}${card.suit}</div>
+        </div>
+    `;
+}
+
+/* =========================
+   SOLITAIRE
+========================= */
+
+let tableau=[];
+let stock=[];
+let waste=[];
+let moves=0;
+
+function startSolitaire(){
+
+    const deck=shuffle(createDeck());
+
+    tableau=[];
+    stock=[];
+    waste=[];
+    moves=0;
+
+    let position=0;
+
+    for(let column=0;column<7;column++){
+
+        tableau[column]=[];
+
+        for(let row=0;row<=column;row++){
+
+            const card=deck[position++];
+
+            card.faceUp =
+                row===column;
+
+            tableau[column].push(card);
+
+        }
+
+    }
+
+    stock=deck.slice(position);
+
+    renderSolitaire();
+
+}
+
+function renderSolitaire(){
+
+    document.getElementById("game").innerHTML=`
+
+        <div class="title">♠ Solitaire</div>
+
+        <div class="subtitle">
+            Move cards and build your four suits.
+        </div>
+
+        <div class="solitaire-top">
+
+            <div>
+                Moves: <strong>${moves}</strong>
+            </div>
+
+            <button class="action" onclick="startSolitaire()">
+                🔄 New Game
+            </button>
+
+        </div>
+
+        <div class="piles">
+
+            <div>
+                <div class="pile"
+                     onclick="drawStock()">
+                    ${stock.length ? "🂠" : "↻"}
+                </div>
+                <small>Stock</small>
+            </div>
+
+            <div>
+                ${
+                    waste.length
+                    ? cardHTML(waste[waste.length-1])
+                    : `<div class="pile">Waste</div>`
+                }
+            </div>
+
+            <div class="pile">A ♠</div>
+            <div class="pile">A ♥</div>
+            <div class="pile">A ♦</div>
+            <div class="pile">A ♣</div>
+
+        </div>
+
+        <div class="tableau" id="tableau"></div>
+
+        <div style="text-align:center;margin-top:20px;color:#969bb2;">
+            Click the stock to draw cards. Click a face-up card to move it.
+        </div>
+
+    `;
+
+    const board =
+        document.getElementById("tableau");
+
+    tableau.forEach((column,columnIndex)=>{
+
+        const div=document.createElement("div");
+
+        div.className="column";
+
+        column.forEach((card,rowIndex)=>{
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.innerHTML =
+                card.faceUp
+                ? cardHTML(card,"clickable")
+                : cardHTML({
+                    rank:"",
+                    suit:"",
+                    red:false
+                },"back");
+
+            const element=wrapper.firstElementChild;
+
+            element.style.top =
+                (rowIndex*25)+"px";
+
+            element.onclick=()=>{
+
+                if(card.faceUp){
+
+                    moveCard(
+                        columnIndex,
+                        rowIndex
+                    );
+
+                }
+
+            };
+
+            div.appendChild(element);
+
+        });
+
+        board.appendChild(div);
+
+    });
+
+}
+
+function drawStock(){
+
+    if(stock.length){
+
+        const card=stock.pop();
+
+        card.faceUp=true;
+
+        waste.push(card);
+
+    }else{
+
+        stock=waste.reverse();
+
+        waste=[];
+
+    }
+
+    moves++;
+
+    renderSolitaire();
+
+}
+
+function moveCard(column,row){
+
+    const card =
+        tableau[column][row];
+
+    if(!card.faceUp) return;
+
+    /*
+       Simple playable solitaire movement:
+       clicking a card moves it to another column.
+       The destination is selected by clicking another
+       column's empty space.
+    */
+
+    const destination =
+        prompt(
+            "Move to column 1-7:"
+        );
+
+    if(destination===null) return;
+
+    const target =
+        Number(destination)-1;
+
+    if(
+        target>=0 &&
+        target<7 &&
+        target!==column
+    ){
+
+        const moving =
+            tableau[column].splice(row);
+
+        tableau[target].push(...moving);
+
+        moves++;
+
+        addScore(2);
+
+        renderSolitaire();
+
+    }
+
+}
+
+/* =========================
+   MEMORY
+========================= */
+
+let memoryCards=[];
+let memoryOpen=[];
+let memoryMatches=0;
+let memoryLocked=false;
+
+function startMemory(){
+
+    const symbols=[
+        "🚀","🌟","🎮","🐱",
+        "🍕","⚽","🚗","🎵"
+    ];
+
+    memoryCards =
+        shuffle([
+            ...symbols,
+            ...symbols
+        ]);
+
+    memoryOpen=[];
+    memoryMatches=0;
+    memoryLocked=false;
+
+    renderMemory();
+
+}
+
+function renderMemory(){
+
+    document.getElementById("game").innerHTML=`
+
+        <div class="title">🧠 Card Memory</div>
+
+        <div class="subtitle">
+            Flip cards and find every matching pair.
+        </div>
+
+        <div class="memory-grid" id="memoryGrid"></div>
+
+        <div style="text-align:center;margin-top:25px;">
+            <button class="action" onclick="startMemory()">
+                🔄 New Game
+            </button>
+        </div>
+
+        <div class="stats">
+            Matches: ${memoryMatches}/8
+        </div>
+
+    `;
+
+    const grid =
+        document.getElementById("memoryGrid");
+
+    memoryCards.forEach((symbol,index)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className="memory-card";
+
+        const isOpen =
+            memoryOpen.includes(index);
+
+        const matched =
+            memoryCards[index]===null;
+
+        if(isOpen || matched){
+
+            button.classList.add(
+                matched ? "matched" : "open"
+            );
+
+            button.textContent=symbol || "✓";
+
+        }
+
+        button.onclick=()=>{
+
+            flipMemory(index);
+
+        };
+
+        grid.appendChild(button);
+
+    });
+
+}
+
+function flipMemory(index){
+
+    if(memoryLocked) return;
+
+    if(memoryCards[index]===null) return;
+
+    if(memoryOpen.includes(index)) return;
+
+    if(memoryOpen.length>=2) return;
+
+    memoryOpen.push(index);
+
+    renderMemory();
+
+    if(memoryOpen.length===2){
+
+        const first=memoryOpen[0];
+        const second=memoryOpen[1];
+
+        if(memoryCards[first]===memoryCards[second]){
+
+            setTimeout(()=>{
+
+                memoryCards[first]=null;
+                memoryCards[second]=null;
+
+                memoryOpen=[];
+
+                memoryMatches++;
+
+                addScore(10);
+
+                renderMemory();
+
+                if(memoryMatches===8){
+
+                    setTimeout(()=>{
+                        alert("🎉 All pairs found! +80 points");
+                    },200);
+
+                }
+
+            },500);
+
+        }else{
+
+            memoryLocked=true;
+
+            setTimeout(()=>{
+
+                memoryOpen=[];
+
+                memoryLocked=false;
+
+                renderMemory();
+
+            },800);
+
+        }
+
+    }
+
+}
+
+/* =========================
+   HIGHER / LOWER
+========================= */
+
+let higherCurrent=0;
+let higherNext=0;
+let higherScore=0;
+let higherStreak=0;
+
+function randomCard(){
+
+    return Math.floor(Math.random()*13)+1;
+
+}
+
+function rankName(value){
+
+    if(value===1) return "A";
+    if(value===11) return "J";
+    if(value===12) return "Q";
+    if(value===13) return "K";
+
+    return value;
+
+}
+
+function startHigher(){
+
+    higherCurrent=randomCard();
+    higherScore=0;
+    higherStreak=0;
+
+    renderHigher();
+
+}
+
+function renderHigher(message=""){
+
+    const value=rankName(higherCurrent);
+
+    document.getElementById("game").innerHTML=`
+
+        <div class="title">🔼 Higher or Lower</div>
+
+        <div class="subtitle">
+            Guess whether the next card is higher or lower.
+        </div>
+
+        <div class="higher">
+
+            <div class="card big-card ${Math.random()>.5?"red":"black"}">
+
+                <div>${value}</div>
+
+                <div class="card-center">🃏</div>
+
+                <div class="card-bottom">${value}</div>
+
+            </div>
+
+            <div class="guess-buttons">
+
+                <button
+                    class="guess higher-btn"
+                    onclick="guessHigher('higher')"
+                >
+                    🔼 Higher
+                </button>
+
+                <button
+                    class="guess lower-btn"
+                    onclick="guessHigher('lower')"
+                >
+                    🔽 Lower
+                </button>
+
+            </div>
+
+            <div class="message">
+                ${message || "Make your prediction!"}
+            </div>
+
+            <div class="stats">
+                Score: ${higherScore}
+                &nbsp; • &nbsp;
+                Streak: ${higherStreak}
+            </div>
+
+            <br>
+
+            <button class="action" onclick="startHigher()">
+                🔄 New Game
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+function guessHigher(choice){
+
+    higherNext=randomCard();
+
+    const correct =
+        choice==="higher"
+        ? higherNext>higherCurrent
+        : higherNext<higherCurrent;
+
+    const currentName =
+        rankName(higherCurrent);
+
+    const nextName =
+        rankName(higherNext);
+
+    if(higherNext===higherCurrent){
+
+        higherScore+=5;
+
+        higherStreak++;
+
+        addScore(5);
+
+        higherCurrent=higherNext;
+
+        renderHigher(
+            `🤝 Same card! +5 points. Next card: ${nextName}`
+        );
+
+        return;
+
+    }
+
+    if(correct){
+
+        higherScore+=10;
+
+        higherStreak++;
+
+        addScore(10);
+
+        higherCurrent=higherNext;
+
+        renderHigher(
+            `🎉 Correct! ${currentName} → ${nextName}`
+        );
+
+    }else{
+
+        higherStreak=0;
+
+        renderHigher(
+            `❌ Wrong! ${currentName} → ${nextName}.`
+        );
+
+        higherCurrent=higherNext;
+
+    }
+
+}
+
+/* START */
+
+startSolitaire();
+
+</script>
+
+</body>
+</html>
