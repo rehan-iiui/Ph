@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Board Game</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 10% 10%,#704cff,transparent 35%),
+        radial-gradient(circle at 90% 90%,#00c8ff,transparent 35%),
+        #080b18;
+    padding:15px;
+}
+
+.app{
+    max-width:1050px;
+    margin:auto;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#8d7cff;
+}
+
+.top-info{
+    background:rgba(255,255,255,.1);
+    padding:10px 15px;
+    border-radius:14px;
+    font-size:14px;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:1fr 260px;
+    gap:15px;
+}
+
+.panel{
+    background:rgba(13,17,38,.9);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:25px;
+    padding:18px;
+    backdrop-filter:blur(20px);
+}
+
+.board{
+    width:min(650px,100%);
+    aspect-ratio:1;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:4px;
+    padding:7px;
+    border-radius:18px;
+    background:#151a32;
+}
+
+.cell{
+    position:relative;
+    min-width:0;
+    aspect-ratio:1;
+    border-radius:7px;
+    background:#222943;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(15px,3vw,28px);
+    transition:.15s;
+}
+
+.cell.path{
+    background:#3b4263;
+}
+
+.cell.start{
+    background:#4d8f66;
+}
+
+.cell.finish{
+    background:#8c4f6c;
+}
+
+.cell.current{
+    box-shadow:0 0 0 3px white,0 0 20px rgba(255,255,255,.35);
+}
+
+.cell:hover{
+    transform:scale(.96);
+}
+
+.player-piece{
+    width:65%;
+    height:65%;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(12px,2vw,22px);
+    border:3px solid white;
+    box-shadow:0 5px 12px rgba(0,0,0,.4);
+}
+
+.red{
+    background:#ff465b;
+}
+
+.blue{
+    background:#398cff;
+}
+
+.green{
+    background:#2dcc76;
+}
+
+.yellow{
+    background:#ffc928;
+    color:#111;
+}
+
+.sidebar h2{
+    margin-bottom:15px;
+}
+
+.players{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+}
+
+.player{
+    padding:13px;
+    border-radius:15px;
+    background:rgba(255,255,255,.07);
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.player.active{
+    background:rgba(126,108,255,.25);
+    box-shadow:inset 0 0 0 1px rgba(150,140,255,.5);
+}
+
+.dot{
+    width:17px;
+    height:17px;
+    border-radius:50%;
+}
+
+.player-name{
+    flex:1;
+}
+
+.position{
+    color:#a7abc0;
+    font-size:13px;
+}
+
+.dice-area{
+    text-align:center;
+    margin-top:25px;
+    padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.1);
+}
+
+.dice{
+    width:95px;
+    height:95px;
+    margin:10px auto 15px;
+    border-radius:22px;
+    background:linear-gradient(135deg,#ffffff,#dce2ff);
+    color:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:58px;
+    box-shadow:0 15px 35px rgba(0,0,0,.3);
+}
+
+.dice.rolling{
+    animation:roll .6s linear infinite;
+}
+
+@keyframes roll{
+    0%{transform:rotate(0) scale(1)}
+    25%{transform:rotate(90deg) scale(.9)}
+    50%{transform:rotate(180deg) scale(1.05)}
+    75%{transform:rotate(270deg) scale(.9)}
+    100%{transform:rotate(360deg) scale(1)}
+}
+
+.roll-btn{
+    width:100%;
+    border:0;
+    padding:15px;
+    border-radius:15px;
+    background:linear-gradient(135deg,#806bff,#4d91ff);
+    color:white;
+    font-weight:800;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.roll-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.controls{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.control-btn{
+    flex:1;
+    padding:11px;
+    border:0;
+    border-radius:12px;
+    background:rgba(255,255,255,.1);
+    color:white;
+    cursor:pointer;
+}
+
+.log{
+    margin-top:18px;
+    max-height:160px;
+    overflow:auto;
+}
+
+.log h3{
+    margin-bottom:8px;
+}
+
+.log-entry{
+    color:#9da2ba;
+    font-size:13px;
+    padding:7px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.winner{
+    text-align:center;
+    padding:15px;
+    margin-top:15px;
+    border-radius:15px;
+    background:rgba(255,211,70,.12);
+    color:#ffe477;
+    display:none;
+}
+
+@media(max-width:800px){
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        order:-1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="logo">🎲 <span>Virtual</span> Board Game</div>
+    <div class="top-info">
+        Turn: <strong id="turnText">Player 1</strong>
+    </div>
+</header>
+
+<div class="layout">
+
+    <div class="panel">
+
+        <div class="board" id="board"></div>
+
+    </div>
+
+    <div class="panel sidebar">
+
+        <h2>Players</h2>
+
+        <div class="players" id="players"></div>
+
+        <div class="dice-area">
+
+            <div>Dice</div>
+
+            <div class="dice" id="dice">⚀</div>
+
+            <button
+                class="roll-btn"
+                id="rollBtn"
+                onclick="rollDice()"
+            >
+                🎲 Roll Dice
+            </button>
+
+            <div class="controls">
+                <button class="control-btn" onclick="newGame()">
+                    🔄 New
+                </button>
+
+                <button class="control-btn" onclick="addPlayer()">
+                    ➕ Player
+                </button>
+            </div>
+
+        </div>
+
+        <div class="winner" id="winner"></div>
+
+        <div class="log">
+            <h3>Game Log</h3>
+            <div id="log"></div>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+const board = document.getElementById("board");
+const playersBox = document.getElementById("players");
+const dice = document.getElementById("dice");
+const rollBtn = document.getElementById("rollBtn");
+const turnText = document.getElementById("turnText");
+const logBox = document.getElementById("log");
+const winnerBox = document.getElementById("winner");
+
+const diceFaces = [
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+];
+
+const playerColors = [
+    "red",
+    "blue",
+    "green",
+    "yellow"
+];
+
+const playerNames = [
+    "Player 1",
+    "Player 2",
+    "Player 3",
+    "Player 4"
+];
+
+let players = [];
+let currentPlayer = 0;
+let gameOver = false;
+let rolling = false;
+
+const boardSize = 8;
+const finishPosition = 63;
+
+/* ---------------- NEW GAME ---------------- */
+
+function newGame(){
+
+    players = [
+        {
+            name:"Player 1",
+            color:"red",
+            position:0,
+            icon:"🔴"
+        },
+        {
+            name:"Player 2",
+            color:"blue",
+            position:0,
+            icon:"🔵"
+        }
+    ];
+
+    currentPlayer = 0;
+    gameOver = false;
+    rolling = false;
+
+    dice.textContent = "⚀";
+
+    winnerBox.style.display = "none";
+
+    logBox.innerHTML = "";
+
+    addLog("🎮 New game started!");
+
+    renderBoard();
+    renderPlayers();
+    updateTurn();
+
+}
+
+/* ---------------- ADD PLAYER ---------------- */
+
+function addPlayer(){
+
+    if(players.length >= 4){
+
+        addLog("Maximum 4 players.");
+
+        return;
+
+    }
+
+    const index = players.length;
+
+    players.push({
+        name:playerNames[index],
+        color:playerColors[index],
+        position:0,
+        icon:["🔴","🔵","🟢","🟡"][index]
+    });
+
+    addLog(
+        "➕ " +
+        playerNames[index] +
+        " joined the game."
+    );
+
+    renderBoard();
+    renderPlayers();
+
+}
+
+/* ---------------- BOARD ---------------- */
+
+function getBoardNumber(row,col){
+
+    /*
+       Creates a snake-like path:
+       Row 7:  0 → 7
+       Row 6: 15 → 8
+       Row 5: 16 → 23
+       etc.
+    */
+
+    const reverse =
+        (7-row)%2===1;
+
+    const base =
+        (7-row)*8;
+
+    return reverse
+        ? base + (7-col)
+        : base + col;
+
+}
+
+function renderBoard(){
+
+    board.innerHTML = "";
+
+    for(let row=0;row<8;row++){
+
+        for(let col=0;col<8;col++){
+
+            const number =
+                getBoardNumber(row,col);
+
+            const cell =
+                document.createElement("div");
+
+            cell.className = "cell path";
+
+            if(number===0)
+                cell.classList.add("start");
+
+            if(number===63)
+                cell.classList.add("finish");
+
+            cell.title =
+                "Position " + number;
+
+            const occupying =
+                players.filter(
+                    p=>p.position===number
+                );
+
+            if(occupying.length){
+
+                const piece =
+                    document.createElement("div");
+
+                const first =
+                    occupying[0];
+
+                piece.className =
+                    "player-piece " + first.color;
+
+                piece.textContent =
+                    occupying.length>1
+                    ? occupying.length
+                    : first.icon;
+
+                cell.appendChild(piece);
+
+            }
+
+            if(
+                players.some(
+                    p=>p.position===number &&
+                    players.indexOf(p)===currentPlayer
+                )
+            ){
+
+                cell.classList.add("current");
+
+            }
+
+            board.appendChild(cell);
+
+        }
+
+    }
+
+}
+
+/* ---------------- PLAYERS ---------------- */
+
+function renderPlayers(){
+
+    playersBox.innerHTML = "";
+
+    players.forEach((player,index)=>{
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "player " +
+            (index===currentPlayer ? "active" : "");
+
+        item.innerHTML = `
+
+            <div class="dot ${player.color}"></div>
+
+            <div class="player-name">
+                ${player.name}
+            </div>
+
+            <div class="position">
+                ${player.position}/63
+            </div>
+
+        `;
+
+        playersBox.appendChild(item);
+
+    });
+
+}
+
+/* ---------------- TURN ---------------- */
+
+function updateTurn(){
+
+    if(!players.length) return;
+
+    turnText.textContent =
+        players[currentPlayer].name;
+
+    rollBtn.disabled =
+        gameOver || rolling;
+
+    renderPlayers();
+    renderBoard();
+
+}
+
+/* ---------------- ROLL DICE ---------------- */
+
+function rollDice(){
+
+    if(gameOver || rolling || !players.length)
+        return;
+
+    rolling = true;
+
+    rollBtn.disabled = true;
+
+    dice.classList.add("rolling");
+
+    let count = 0;
+
+    const animation =
+        setInterval(()=>{
+
+            const random =
+                Math.floor(Math.random()*6);
+
+            dice.textContent =
+                diceFaces[random];
+
+            count++;
+
+            if(count>=10){
+
+                clearInterval(animation);
+
+                finishRoll();
+
+            }
+
+        },70);
+
+}
+
+function finishRoll(){
+
+    const value =
+        Math.floor(Math.random()*6)+1;
+
+    dice.textContent =
+        diceFaces[value-1];
+
+    dice.classList.remove("rolling");
+
+    const player =
+        players[currentPlayer];
+
+    const oldPosition =
+        player.position;
+
+    let newPosition =
+        oldPosition + value;
+
+    if(newPosition > finishPosition){
+
+        newPosition = oldPosition;
+
+        addLog(
+            "🎲 " +
+            player.name +
+            " rolled " +
+            value +
+            " but needs an exact roll to finish."
+        );
+
+    }else{
+
+        player.position = newPosition;
+
+        addLog(
+            "🎲 " +
+            player.name +
+            " rolled " +
+            value +
+            " and moved to " +
+            newPosition +
+            "."
+        );
+
+    }
+
+    renderBoard();
+    renderPlayers();
+
+    if(player.position===finishPosition){
+
+        gameOver = true;
+
+        winnerBox.style.display = "block";
+
+        winnerBox.textContent =
+            "🏆 " +
+            player.name +
+            " wins the game!";
+
+        addLog(
+            "🏆 " +
+            player.name +
+            " reached the finish!"
+        );
+
+        rolling = false;
+
+        updateTurn();
+
+        return;
+
+    }
+
+    /*
+       A 6 gives another turn.
+    */
+
+    if(value===6){
+
+        addLog(
+            "⭐ " +
+            player.name +
+            " rolled a 6 and gets another turn!"
+        );
+
+    }else{
+
+        nextTurn();
+
+    }
+
+    rolling = false;
+
+    updateTurn();
+
+}
+
+/* ---------------- NEXT TURN ---------------- */
+
+function nextTurn(){
+
+    currentPlayer++;
+
+    if(currentPlayer>=players.length){
+
+        currentPlayer=0;
+
+    }
+
+}
+
+/* ---------------- LOG ---------------- */
+
+function addLog(message){
+
+    const entry =
+        document.createElement("div");
+
+    entry.className = "log-entry";
+
+    entry.textContent = message;
+
+    logBox.prepend(entry);
+
+    while(logBox.children.length>12){
+
+        logBox.removeChild(
+            logBox.lastChild
+        );
+
+    }
+
+}
+
+/* START */
+
+newGame();
+
+</script>
+
+</body>
+</html>
